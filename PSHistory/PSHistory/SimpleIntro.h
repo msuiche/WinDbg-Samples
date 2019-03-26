@@ -20,6 +20,7 @@ using namespace std;
 
 #include <Dbgeng.h>
 #include <dbgmodel.h>
+#include "DbgModelClientEx.h"
 #include <string>
 
 #include "Utility.h"

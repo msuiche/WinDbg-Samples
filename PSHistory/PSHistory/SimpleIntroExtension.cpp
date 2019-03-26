@@ -27,6 +27,8 @@ using namespace Microsoft::WRL;
 ComPtr<IDebugControl4> g_Control4 = nullptr;
 PDEBUG_CLIENT g_DebugClient = nullptr;
 
+ComPtr<IDebugSystemObjects> g_System = nullptr;
+
 IDataModelManager *g_pManager = nullptr;
 IDebugHost *g_pHost = nullptr;
 Microsoft::WRL::ComPtr<IDebugClient> g_spClient;
@@ -68,6 +70,10 @@ HRESULT InitializeExtension()
     if (g_Control4 == NULL)
     {
         IfFailedReturn(g_DebugClient->QueryInterface(IID_PPV_ARGS(&g_Control4)));
+    }
+
+    if (g_System == NULL) {
+        IfFailedReturn(g_DebugClient->QueryInterface(IID_PPV_ARGS(&g_System)));
     }
 
     return S_OK;
@@ -207,6 +213,13 @@ pshistory(PDEBUG_CLIENT4 Client, PCSTR args)
     // 0:000> dx @$curprocess.PSHistory
     // @$curprocess.PSHistory
     //
+
+    /*
+    Object::Create(HostContext(),
+        L"A", pid,
+        L"B", processName);
+    */
+
     g_PSHistory->AddHistoryToModel();
 
     return S_OK;

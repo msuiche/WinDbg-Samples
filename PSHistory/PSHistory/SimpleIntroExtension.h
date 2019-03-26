@@ -11,6 +11,7 @@ IDataModelManager *GetManager();
 IDebugHost *GetHost();
 
 extern ComPtr<IDebugControl4> g_Control4;
+extern ComPtr<IDebugSystemObjects> g_System;
 extern PDEBUG_CLIENT g_DebugClient;
 
 size_t

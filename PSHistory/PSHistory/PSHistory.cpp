@@ -226,6 +226,25 @@ PSHistory::AddChildrenToParentModel(
     return hr;
 }
 
+string
+GetCurrentProcessName(
+    VOID
+) {
+    string processName;
+
+    UCHAR ExecutablePath[MAX_PATH] = { 0 };
+    ULONG Size = 0;
+    g_System->GetCurrentProcessExecutableName((PSTR)ExecutablePath, sizeof(ExecutablePath), &Size);
+
+    LPSTR executableName = strrchr((LPSTR)ExecutablePath, '\\');
+    if (executableName) {
+        executableName++;
+        processName = string(executableName);
+    }
+
+    return processName;
+}
+
 HRESULT
 PSHistory::GetHistory(
     VOID
@@ -237,15 +256,11 @@ PSHistory::GetHistory(
 
     vector<wstring> tmp;
 
-    wstring processName;
-
-    // TODO: Compare processName with "powershell.exe"
-    hr = GetProcessNameFromDataModel(&processName);
-    if (SUCCEEDED(hr))
-    {
-        g_Control4->Output(DEBUG_OUTPUT_NORMAL, "process name = %S\n", processName.c_str());
+    string processName = GetCurrentProcessName();
+    if (processName != "powershell.exe") {
+        g_Control4->Output(DEBUG_OUTPUT_NORMAL, "The current process needs to be powershell (current process = %s)\n", processName.c_str());
+        return S_OK;
     }
-
 
     if (m_PowerShellHistory.size()) return S_OK;
 
@@ -287,10 +302,15 @@ PSHistory::GetHistory(
 
         if (Contains(outputCommand, L"String:", outputContains))
         {
+            wstring cmdline = outputContains[0];
+            cmdline.erase(0, strlen("String:      "));
+            m_PowerShellHistory.push_back(cmdline);
+
+            /*
             if (Split(outputContains[0], outputSplit, L' '))
             {
                 m_PowerShellHistory.push_back(outputSplit[1]);
-            }
+            }*/
         }
     }
 
