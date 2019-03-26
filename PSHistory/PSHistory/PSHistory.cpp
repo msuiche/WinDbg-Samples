@@ -333,6 +333,10 @@ PSHistory::AddHistoryToModel(
     void
 )
 {
+    //
+    // TODO: Add PSHistory as an iterable Object.
+    // https://github.com/Microsoft/WinDbg-Libraries/tree/master/DbgModelCppLib#making-objects-iterable (C++17)
+    //
     if (m_PowerShellHistory.size())
     {
         AddChildrenToParentModel(L"Debugger.Models.Process", L"PSHistory", m_PowerShellHistory);
